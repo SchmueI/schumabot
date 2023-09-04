@@ -3,36 +3,61 @@
     - Odradek 2022
 """
 
+# Externe Module
+import telebot
+from telebot import types
+from datetime import datetime
 
-import main.init
-import main.login
-import main.caldav
-import main.schedules
-import main.dashboard
+# Interne Module
+from modules.bot.msgParse import process
+from modules.bot.msgParse import handler
 
-import lsp.iwe
-
-import credentials      # Dieses Modul ist nicht im Repository inkludiert.
+# Nicht öffentliche sichtbare Module/ Testmodule
+from modules.bot.database import manusers
+import credentials
 
 err = "Kein Zugang möglich.\nDas kann zwei Gründe haben:\n-Deine eingegebenen Daten sind falsch\n-Die API ist überlastet.\nPrüfe die Daten und probiere es erneut!"
 
-driver = init.init_driver(headless=False)
+token = credentials.token()
 
-# Die Zugangsdaten werden von der Datenbank geladen.
-# Wenn Sie diese API nutzen wollen, verwenden Sie Ihre eigenen Zugangsdaten.
-username = credentials.username()
-password = credentials.passwort()
-#username = "Falsche Daten."
+bot = telebot.TeleBot(token, parse_mode="HTML")
 
-success, driver = login.login(driver, username=username, password=password)
-if success:
-    success, driver = dashboard.load(driver)
-else:
-    print ("DRIVER LOGIN\n" + err)
+@bot.message_handler(func=lambda m: True)
+def handle_command(message):
 
-if success:
-    iwe.register(driver)
-else:
-    print ("DRIVER DASHBOARD\n" + err)
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
 
-init.close_driver(driver)
+    userID = message.json["chat"]["id"]
+    msg = str(message.text)
+
+    log = current_time + " " + repr (message.json["chat"])+ " >> " + repr (message.text)
+
+    if (msg == "/start"):
+        # Der /start Befehl stellt eine Ausnahme dar und wird
+        # exklusiv beim Start des Bots getriggert.
+
+        markup = types.ReplyKeyboardMarkup(row_width = 2)
+        
+        nutzername = "🧑🏼‍🚀 Anmelden"
+        hilfe      = "🛟 Hilfe"
+
+        markup.add(nutzername, hilfe)
+        
+        text   = process.welcome()
+        markup = markup
+
+        manusers.add(userID)
+        manusers.change(userID, "lastMsg", "/start")
+
+        bot.send_message(userID, process.welcome(), reply_markup=markup)
+
+        
+    else:
+        # Jeder weitere Input wird entsprechend mit dem Parser behandelt.
+        handler.handle(userID, msg, bot)
+
+
+
+
+bot.infinity_polling()
