@@ -8,6 +8,11 @@ from ..database import manusers
 from . import process
 
 from ..tools import approve
+from ..tools import schedule
+from ..tools import plan
+
+# Externe Module
+from datetime import datetime
 
 def register (userID, msg, bot):
     manusers.change(userID, "lastMsg", msg)
@@ -46,6 +51,22 @@ def appendUser(userID, msg, bot):
         reply_markup = markup
     )
 
+def sendCurrentPlan(userID, msg, bot):
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+
+    text = plan.generate(userID, username, password, timeshift=0)
+
+    markup = process.mainMenue(userID)
+
+    bot.send_message (
+        userID,
+        text,
+        reply_markup = markup
+    )
+    
+    
+
 def appendPassword(userID, msg, bot):
     manusers.change(userID, "password", msg)
     manusers.change(userID, "lastMsg", "🧑🏼‍🚀 Zum Hauptmenü")
@@ -53,6 +74,9 @@ def appendPassword(userID, msg, bot):
     password = msg
     username = manusers.show(userID, "username")
     valid = approve.isValid(username, password)
+    
+    if valid: manusers.change(userID, "verified", "true")
+    else: manusers.change(userID, "verified", "false")
 
     text, markup = process.gotPassword(userID, valid = valid)
 
@@ -78,8 +102,9 @@ def handle(userID, msg, bot):
     # Wenn die Nachricht nicht dem erwarteten Typus entspricht,
     # wird eine Fehlermeldung ausgegeben.
 
-    if   (msg == "🛟 Hilfe")    : sendHelp(userID, msg, bot)
-    elif (msg == "🧑🏼‍🚀 Anmelden") : register(userID, msg, bot)
+    if   (msg == "🛟 Hilfe")    : sendHelp          (userID, msg, bot)
+    elif (msg == "🧑🏼‍🚀 Anmelden") : register          (userID, msg, bot)
+    elif (msg == "☀️ Tagesplan"): sendCurrentPlan   (userID, msg, bot)
     else:
         # Ab hier muss entschieden werden, ob eine Nachricht erwartet wird,
         # welche nicht den Befehlen entspricht.
