@@ -32,5 +32,6 @@ def get(userID, username, password, timeshift=0):
             if not i > 10:
                 text = text + "• " + str(i) + ". " + lesson + "\n"
             i = i+1
+    else: text = "Error: Keine Verbindung möglich"
     init.close_driver(driver)
     return text
