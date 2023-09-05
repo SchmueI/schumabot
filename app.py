@@ -7,6 +7,7 @@
 import telebot
 from telebot import types
 from datetime import datetime
+import os
 
 # Interne Module
 from modules.bot.msgParse import process
@@ -52,6 +53,10 @@ def handle_command(message):
 
         bot.send_message(userID, process.welcome(), reply_markup=markup)
 
+    elif (msg == "exit"):
+        if (userID in credentials.adminID()):
+            bot.send_message(155667852, "Der Bot wird beendet.", parse_mode="HTML")
+            os.system('kill %d' % os.getpid())
         
     else:
         # Jeder weitere Input wird entsprechend mit dem Parser behandelt.
