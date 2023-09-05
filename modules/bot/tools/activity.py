@@ -28,6 +28,7 @@ def get (userID, username, password, date="2023-01-01"):
         text = ""
         for activity in table:
             text = text + "• " + activity + "\n"
+        if text == "• \n": text = ""
     
     init.close_driver(driver)
     
