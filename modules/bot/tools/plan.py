@@ -5,9 +5,10 @@
 from datetime import datetime, timedelta
 
 # Interne Module
-from . import schedule
+from . import schedule, activity
 
 def generate(userID, username, password, timeshift=0):
+    
     datum = (
         datetime.today() + timedelta(days=timeshift)
     )
@@ -22,10 +23,20 @@ def generate(userID, username, password, timeshift=0):
     if (weekday == 5): weekday = "Samstag"
     if (weekday == 6): weekday = "Sonntag"
 
-    datum = datum.strftime("%d.%m.%Y")
+    strDatum = datum.strftime("%d.%m.%Y")
+    isoDatum = datum.strftime("%Y-%m-%d")
     
-    text = "<b>"+weekday+", "+datum+"</b>\n\n"
+    # Fette Überschrift des Datums
+    text = "<b>"+weekday+", "+strDatum+"</b>\n\n"
+
+    # Lade Vertretungsplan
     text = text + "<u>Stunden- und Vertretungsplan</u>\n"
     text = text + schedule.get(userID, username, password, timeshift=0)
+
+    text = text + "\n"
+
+    # Lade Arbeitsgruppen
+    text = text + "<u>Arbeitsgruppen</u>\n"
+    text = text + activity.get(userID, username, password, date=isoDatum)
 
     return text
