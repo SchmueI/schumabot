@@ -5,7 +5,7 @@
 from datetime import datetime, timedelta
 
 # Interne Module
-from . import schedule, activity
+from . import schedule, activity, meal
 
 def generate(userID, username, password, timeshift=0):
     
@@ -34,6 +34,13 @@ def generate(userID, username, password, timeshift=0):
     text = text + schedule.get(userID, username, password, timeshift=0)
 
     text = text + "\n"
+
+    # Lade Speiseplan
+    weekstr = datum.strftime("%Y")+"-"+str(datum.isocalendar().week)
+    text = text + "<u>Essen</u>\n"
+    text = text + meal.read(week = weekstr, weekday = weekday)
+
+    text = text + "\n\n"
 
     # Lade Arbeitsgruppen
     text = text + "<u>Arbeitsgruppen</u>\n"
