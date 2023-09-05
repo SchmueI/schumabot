@@ -30,7 +30,7 @@ def generate(userID, username, password, timeshift=0):
     text = "<b>"+weekday+", "+strDatum+"</b>\n\n"
 
     # Lade Vertretungsplan
-    element = schedule.get(userID, username, password, timeshift=0)
+    element = schedule.get(userID, username, password, timeshift=timeshift)
     if not element == "":
         text = text + "<u>Stunden- und Vertretungsplan</u>\n"
         text = text + element
