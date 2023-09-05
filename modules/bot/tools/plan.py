@@ -5,7 +5,7 @@
 from datetime import datetime, timedelta
 
 # Interne Module
-from . import schedule, activity, meal
+from . import schedule, activity, meal, nextDates
 
 def generate(userID, username, password, timeshift=0):
     
@@ -30,20 +30,34 @@ def generate(userID, username, password, timeshift=0):
     text = "<b>"+weekday+", "+strDatum+"</b>\n\n"
 
     # Lade Vertretungsplan
-    text = text + "<u>Stunden- und Vertretungsplan</u>\n"
-    text = text + schedule.get(userID, username, password, timeshift=0)
+    element = schedule.get(userID, username, password, timeshift=0)
+    if not element == "":
+        text = text + "<u>Stunden- und Vertretungsplan</u>\n"
+        text = text + element
 
-    text = text + "\n"
+        text = text + "\n"
+
+    # Lade Informationen
+    element = nextDates.get(userID, username, password, date=isoDatum)
+    if not element == "":
+        text = text + "<u>Info</u>\n"
+        text = text + element
+        
+        text = text + "\n"
 
     # Lade Speiseplan
     weekstr = datum.strftime("%Y")+"-"+str(datum.isocalendar().week)
-    text = text + "<u>Essen</u>\n"
-    text = text + meal.read(week = weekstr, weekday = weekday)
+    element = meal.read(week = weekstr, weekday = weekday)
+    if not element == "":
+        text = text + "<u>Essen</u>\n"
+        text = text + element
 
-    text = text + "\n\n"
+        text = text + "\n\n"
 
     # Lade Arbeitsgruppen
-    text = text + "<u>Arbeitsgruppen</u>\n"
-    text = text + activity.get(userID, username, password, date=isoDatum)
+    element = activity.get(userID, username, password, date=isoDatum)
+    if not element == "":
+        text = text + "<u>Arbeitsgruppen</u>\n"
+        text = text + element
 
     return text
