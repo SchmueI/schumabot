@@ -29,8 +29,7 @@ def generate(bot, userID, username, password, timeshift=0):
     
     # Fette Überschrift des Datums
     text = "<b>"+weekday+", "+strDatum+"</b>\n\n"
-    message = bot.send_message (userID, text)
-    print (message)
+    message = bot.send_message (userID, "[Daten werden geladen]\n<code>[          ]  0%</code>\n\n"+text)
 
     # Lade Vertretungsplan
     element = schedule.get(userID, username, password, timeshift=timeshift)
@@ -40,7 +39,7 @@ def generate(bot, userID, username, password, timeshift=0):
 
         text = text + "\n"
 
-        bot.edit_message_text(text, userID, message.message_id)
+        bot.edit_message_text("[Daten werden geladen]\n<code>[###_      ] 33%</code>\n\n"+text, userID, message.message_id)
 
     # Lade Informationen
     element = nextDates.get(userID, username, password, date=isoDatum)
@@ -50,7 +49,7 @@ def generate(bot, userID, username, password, timeshift=0):
         
         text = text + "\n"
 
-        bot.edit_message_text(text, message.chat.id, message.message_id)
+        bot.edit_message_text("[Daten werden geladen]\n<code>[######_   ] 66%</code>\n\n"+text, message.chat.id, message.message_id)
 
     # Lade Speiseplan
     weekstr = datum.strftime("%Y")+"-"+str(datum.isocalendar().week)
@@ -61,13 +60,15 @@ def generate(bot, userID, username, password, timeshift=0):
 
         text = text + "\n\n"
 
-        bot.edit_message_text(text, message.chat.id, message.message_id)
+        bot.edit_message_text("[Daten werden geladen]\n<code>[########  ] 80%</code>\n\n"+text, message.chat.id, message.message_id)
 
     # Lade Arbeitsgruppen
     element = activity.get(userID, username, password, date=isoDatum)
     if not element == "":
         text = text + "<u>Arbeitsgruppen</u>\n"
         text = text + element
-        bot.edit_message_text(text, message.chat.id, message.message_id)
+        bot.edit_message_text("[Daten werden geladen]\n<code>[##########]100%</code>\n\n"+text, message.chat.id, message.message_id)
+    
+    bot.edit_message_text(text, message.chat.id, message.message_id)
 
     return text
