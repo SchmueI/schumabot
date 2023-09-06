@@ -55,15 +55,12 @@ def sendCurrentPlan(userID, msg, bot):
     username = manusers.show(userID, "username")
     password = manusers.show(userID, "password")
 
-    text = plan.generate(userID, username, password, timeshift=0)
+    text = plan.generate(bot, userID, username, password, timeshift=0)
 
-    markup = process.mainMenue(userID)
-
-    bot.send_message (
-        userID,
-        text,
-        reply_markup = markup
-    )
+def iweOptions(userID, msg, bot):
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+    
     
     
 
@@ -105,6 +102,7 @@ def handle(userID, msg, bot):
     if   (msg == "🛟 Hilfe")    : sendHelp          (userID, msg, bot)
     elif (msg == "🧑🏼‍🚀 Anmelden") : register          (userID, msg, bot)
     elif (msg == "☀️ Tagesplan"): sendCurrentPlan   (userID, msg, bot)
+    elif (msg == "🏡 IWE")      : iweOptions        (userID, msg, bot)
     else:
         # Ab hier muss entschieden werden, ob eine Nachricht erwartet wird,
         # welche nicht den Befehlen entspricht.
