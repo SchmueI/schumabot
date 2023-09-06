@@ -3,11 +3,12 @@
 
 #Externe Module:
 from datetime import datetime, timedelta
+from telebot import types
 
 # Interne Module
 from . import schedule, activity, meal, nextDates
 
-def generate(userID, username, password, timeshift=0):
+def generate(bot, userID, username, password, timeshift=0):
     
     datum = (
         datetime.today() + timedelta(days=timeshift)
@@ -28,6 +29,8 @@ def generate(userID, username, password, timeshift=0):
     
     # Fette Überschrift des Datums
     text = "<b>"+weekday+", "+strDatum+"</b>\n\n"
+    message = bot.send_message (userID, text)
+    print (message)
 
     # Lade Vertretungsplan
     element = schedule.get(userID, username, password, timeshift=timeshift)
@@ -37,6 +40,8 @@ def generate(userID, username, password, timeshift=0):
 
         text = text + "\n"
 
+        bot.edit_message_text(text, userID, message.message_id)
+
     # Lade Informationen
     element = nextDates.get(userID, username, password, date=isoDatum)
     if not element == "":
@@ -44,6 +49,8 @@ def generate(userID, username, password, timeshift=0):
         text = text + element
         
         text = text + "\n"
+
+        bot.edit_message_text(text, message.chat.id, message.message_id)
 
     # Lade Speiseplan
     weekstr = datum.strftime("%Y")+"-"+str(datum.isocalendar().week)
@@ -54,10 +61,13 @@ def generate(userID, username, password, timeshift=0):
 
         text = text + "\n\n"
 
+        bot.edit_message_text(text, message.chat.id, message.message_id)
+
     # Lade Arbeitsgruppen
     element = activity.get(userID, username, password, date=isoDatum)
     if not element == "":
         text = text + "<u>Arbeitsgruppen</u>\n"
         text = text + element
+        bot.edit_message_text(text, message.chat.id, message.message_id)
 
     return text
