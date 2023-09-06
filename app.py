@@ -29,13 +29,11 @@ messages = []
 
 @bot.message_handler(func=lambda m: True)
 def handle_command(message):
-
-    reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas geduld.\n🐌 Derzeit bin ich lahm.")
+    reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
     messages.append([message, reply])
 
 
 def run_commands():
-    print("JA; HIER GEHT ES LOS")
     for request in list(messages):
         message = request[0]
         reply = request[1]
@@ -80,13 +78,32 @@ def run_commands():
 
         bot.delete_message(reply.chat.id, reply.message_id)
 
+def updateQueue():
+    while True:
+        pos = 1
+        for request in list(messages):
+            reply = request[1]
+
+            txt = """
+🧑🏼‍🚀 Deine Anfrage wird bearbeitet.
+🌱 Bitte hab etwas Geduld.
+🐌 Derzeit bin ich lahm.
+
+🐍 Warteschlange: """
+            txt = txt + str(pos)
+            try:
+                bot.edit_message_text(txt, reply.chat.id, reply.message_id)
+            except:
+                txt = txt
+            pos = pos+1
+        sleep(1)
 
 def iterate():
     while True:
         sleep(1)
         run_commands()
-        print ("STARTE ABRUF DER BEFEHLE")
 
 _thread.start_new_thread(iterate, ())
+_thread.start_new_thread(updateQueue, ())
 
 bot.infinity_polling()
