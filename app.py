@@ -79,7 +79,25 @@ def run_commands():
         bot.delete_message(reply.chat.id, reply.message_id)
 
 def updateQueue():
+    
+    akt = 1
+    render = " |"
+
     while True:
+
+        if akt == 9: akt = 1
+
+        if akt == 1: render = " |"
+        if akt == 2: render = " /"
+        if akt == 3: render = " –"
+        if akt == 4: render = " \\"
+        if akt == 5: render = " |"
+        if akt == 6: render = " /"
+        if akt == 7: render = " -"
+        if akt == 8: render = " \\"
+
+        akt += 1
+
         pos = 1
         for request in list(messages):
             reply = request[1]
@@ -89,8 +107,8 @@ def updateQueue():
 🌱 Bitte hab etwas Geduld.
 🐌 Derzeit bin ich lahm.
 
-🐍 Warteschlange: """
-            txt = txt + str(pos)
+🐍 <code>Warteschlange: """
+            txt = txt + str(pos) + render+"</code>"
             try:
                 bot.edit_message_text(txt, reply.chat.id, reply.message_id)
             except:
