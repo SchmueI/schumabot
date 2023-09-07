@@ -38,8 +38,10 @@ def generate(bot, userID, username, password, timeshift=0):
         text = text + element
 
         text = text + "\n"
-
-        bot.edit_message_text("[Daten werden geladen]\n<code>[###_      ] 33%</code>\n\n"+text, userID, message.message_id)
+        try:
+            bot.edit_message_text("[Daten werden geladen]\n<code>[###_      ] 33%</code>\n\n"+text, userID, message.message_id)
+        except:
+            bot.send_message (userID, "🦥 Ich bin derzeit überlastet....\n🌪 Probiere es später erneut")
 
     # Lade Informationen
     element = nextDates.get(userID, username, password, date=isoDatum)
@@ -48,8 +50,10 @@ def generate(bot, userID, username, password, timeshift=0):
         text = text + element
         
         text = text + "\n"
-
-        bot.edit_message_text("[Daten werden geladen]\n<code>[######_   ] 66%</code>\n\n"+text, message.chat.id, message.message_id)
+        try:
+            bot.edit_message_text("[Daten werden geladen]\n<code>[######_   ] 66%</code>\n\n"+text, message.chat.id, message.message_id)
+        except:
+            bot.send_message (userID, "🦥 Ich bin derzeit überlastet....\n🌪 Probiere es später erneut")
 
     # Lade Speiseplan
     weekstr = datum.strftime("%Y")+"-"+str(datum.isocalendar().week)
@@ -59,16 +63,22 @@ def generate(bot, userID, username, password, timeshift=0):
         text = text + element
 
         text = text + "\n\n"
-
-        bot.edit_message_text("[Daten werden geladen]\n<code>[########  ] 80%</code>\n\n"+text, message.chat.id, message.message_id)
+        try: 
+            bot.edit_message_text("[Daten werden geladen]\n<code>[########  ] 80%</code>\n\n"+text, message.chat.id, message.message_id)
+        except:
+            bot.send_message (userID, "🦥 Ich bin derzeit überlastet....\n🌪 Probiere es später erneut")
 
     # Lade Arbeitsgruppen
     element = activity.get(userID, username, password, date=isoDatum)
     if not element == "":
         text = text + "<u>Arbeitsgruppen</u>\n"
         text = text + element
-        bot.edit_message_text("[Daten werden geladen]\n<code>[##########]100%</code>\n\n"+text, message.chat.id, message.message_id)
-    
+
+        try:
+            bot.edit_message_text("[Daten werden geladen]\n<code>[##########]100%</code>\n\n"+text, message.chat.id, message.message_id)
+        except:
+            bot.send_message (userID, "🦥 Ich bin derzeit überlastet....\n🌪 Probiere es später erneut")
+
     bot.edit_message_text(text, message.chat.id, message.message_id)
 
     return text
