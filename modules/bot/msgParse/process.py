@@ -8,6 +8,9 @@ from telebot import types
 # Nicht öffentliche Module
 from ..database import manusers
 
+# Interne Module
+from ..tools import iwe
+
 no_markup = types.ReplyKeyboardRemove(selective=False)
 
 def none():
@@ -115,3 +118,41 @@ def gotPassword(userID, valid=False):
         markup.add(nutzername, hilfe)
 
         return msg, markup
+
+def triggerIWE(userID, username, password):
+    
+    state = iwe.loadState(userID, username, password)
+
+    if state == "Nicht angemeldet"          : state = "🌑 "+state
+    if state == "Gesamtes IWE"              : state = "🌕 "+state
+    if state == "Nur Freitag bis Samstag"   : state = "🌗 "+state
+    if state == "Nur Samstag bis Sonntag"   : state = "🌓 "+state
+
+    msg = "🏡 <b>IWE-Anmeldung</b>\n\n🧑🏼‍🚀 Aktueller Anmeldestand: \n"+state
+
+    markup = types.ReplyKeyboardMarkup(row_width = 2)
+
+    frso = "🌕 gesamtes IWE"
+    frsa = "🌗 Fr - Sa"
+    saso = "🌓 Sa - So"
+    noth = "🌑 Abmelden"
+    main = "🧑🏼‍🚀 Zum Hauptmenü"
+
+    markup.add(frso)
+    markup.add(frsa, saso)
+    markup.add(noth)
+    markup.add(main)
+
+    return msg, markup
+
+def sendIWE(userID, username, password, state):
+
+    success = iwe.sendState(userID, username, password, state)
+    markup  = mainMenue(userID)
+
+    if success:
+        msg = "💫 Deine Einstellung wurde übernommen"
+    else:
+        msg = "🤺 Das hat nicht geklappt\n🌫 Vielleicht gibt es kein IWE\n🌤 Probiere es gern später erneut!"
+
+    return msg, markup

@@ -60,8 +60,27 @@ def sendCurrentPlan(userID, msg, bot):
 def iweOptions(userID, msg, bot):
     username = manusers.show(userID, "username")
     password = manusers.show(userID, "password")
-    
-    
+
+    text, markup = process.triggerIWE(userID, username, password)
+
+    bot.send_message(
+        userID, 
+        text,
+        reply_markup = markup
+    )
+
+def iweChange(userID, msg, bot, state):
+    manusers.change(userID, "lastMsg", msg)
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+
+    text, markup = process.sendIWE(userID, username, password, state)
+
+    bot.send_message(
+        userID,
+        text,
+        reply_markup = markup
+    )    
     
 
 def appendPassword(userID, msg, bot):
@@ -92,6 +111,18 @@ def check (userID, msg, bot):
     else:
         unknownCommand(userID, msg, bot)
 
+def mainMenue(userID, msg, bot):
+    manusers.change(userID, "lastMsg", msg)
+    markup = process.mainMenue(userID)
+
+    text = "🧑🏼‍🚀 Willkommen zurück."
+
+    bot.send_message(
+        userID,
+        text,
+        reply_markup = markup
+    )
+
 
 def handle(userID, msg, bot):
     
@@ -99,10 +130,15 @@ def handle(userID, msg, bot):
     # Wenn die Nachricht nicht dem erwarteten Typus entspricht,
     # wird eine Fehlermeldung ausgegeben.
 
-    if   (msg == "🛟 Hilfe")    : sendHelp          (userID, msg, bot)
-    elif (msg == "🧑🏼‍🚀 Anmelden") : register          (userID, msg, bot)
-    elif (msg == "☀️ Tagesplan"): sendCurrentPlan   (userID, msg, bot)
-    elif (msg == "🏡 IWE")      : iweOptions        (userID, msg, bot)
+    if   (msg == "🛟 Hilfe")                    : sendHelp          (userID, msg, bot)
+    elif (msg == "🧑🏼‍🚀 Anmelden")                 : register          (userID, msg, bot)
+    elif (msg == "☀️ Tagesplan")                : sendCurrentPlan   (userID, msg, bot)
+    elif (msg == "🏡 IWE")                      : iweOptions        (userID, msg, bot)
+    elif (msg == "🌕 gesamtes IWE")             : iweChange         (userID, msg, bot, 1)
+    elif (msg == "🌗 Fr - Sa")                  : iweChange         (userID, msg, bot, 2)
+    elif (msg == "🌓 Sa - So")                  : iweChange         (userID, msg, bot, 3)
+    elif (msg == "🌑 Abmelden")                 : iweChange         (userID, msg, bot, 0)
+    elif (msg in ["🧑🏼‍🚀 Zum Hauptmenü", "/main"]) : mainMenue         (userID, msg, bot)
     else:
         # Ab hier muss entschieden werden, ob eine Nachricht erwartet wird,
         # welche nicht den Befehlen entspricht.
