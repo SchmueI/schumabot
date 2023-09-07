@@ -8,7 +8,7 @@ from ..database  import manusers
 def loadState(userID, username, password):
 
     # Starte Selenium Driver, Nutze Login Daten.
-    driver = init.init_driver(headless=False)
+    driver = init.init_driver(headless=True)
 
     success, driver = login.login(driver, username=username, password=password)
     success, driver = dashboard.load(driver)
@@ -27,7 +27,7 @@ def loadState(userID, username, password):
 def sendState(userID, username, password, state):
     
     # Starte Selenium Driver, Nutze Login Daten.
-    driver = init.init_driver(headless=False)
+    driver = init.init_driver(headless=True)
 
     success, driver = login.login(driver, username=username, password=password)
     success, driver = dashboard.load(driver)
