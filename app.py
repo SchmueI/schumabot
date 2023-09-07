@@ -29,8 +29,29 @@ messages = []
 
 @bot.message_handler(func=lambda m: True)
 def handle_command(message):
-    reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
-    messages.append([message, reply])
+
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    
+    try:
+       
+        userID = message.json["chat"]["id"]
+        requests = 0
+        if not userID in credentials.adminID():
+            for element in messages:
+                if element[0].json["chat"]["id"] == userID: requests +=1
+            
+            if not requests > 1:
+                reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
+                messages.append([message, reply])
+            else:
+                bot.send_message(userID, "🚆 Immer langsam.\n🧑🏼‍🚀 Du darfst maximal 2 Anfragen gleichzeitig stellen.")
+        else:
+            reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
+            messages.append([message, reply])
+    
+    except:
+        print ("To many requests.")
 
 
 def run_commands():
