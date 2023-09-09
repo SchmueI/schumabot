@@ -156,3 +156,20 @@ def sendIWE(userID, username, password, state):
         msg = "🤺 Das hat nicht geklappt\n🌫 Vielleicht gibt es kein IWE\n🌤 Probiere es gern später erneut!"
 
     return msg, markup
+
+def showPlans():
+    msg = "📆 Folgende Pläne kann ich dir zeigen:"
+
+    markup = types.ReplyKeyboardMarkup(row_width = 2)
+    
+    tagesp = "☀️ Tagesplan"
+    morpla = "🌼 Nächster Plan"
+    verpla = "🥸 Vertretungsplan"
+    speipl = "🍽 Speiseplan"
+    agplan = "🏓 AG Plan"
+    terpla = "📆 Terminplan"
+    mainme = "🧑🏼‍🚀 Zum Hauptmenü"
+
+    markup.add (tagesp, morpla, verpla, speipl, agplan, terpla, mainme)
+
+    return msg, markup
