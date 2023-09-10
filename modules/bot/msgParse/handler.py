@@ -97,6 +97,54 @@ def sendPlan(userID, msg, timeshift, bot):
 
     text = plan.generate(bot, userID, username, password, timeshift=timeshift)
 
+def sendVPlan(userID, msg, bot):
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+
+    text = process.getVPlan(userID, username, password)
+
+    bot.send_message(
+        userID,
+        text
+    )
+
+def sendSPlan(userID, msg, bot):
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+
+    text, markup = process.getSPlan(userID, username, password)
+
+    bot.send_message(
+        userID,
+        text,
+        reply_markup = markup
+    )
+
+def sendAPlan(userID, msg, bot):
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+
+    text, markup = process.getAPlan(userID, username, password)
+
+    bot.send_message(
+        userID,
+        text,
+        reply_markup = markup
+    )
+
+def sendTPlan(userID, msg, bot):
+    username = manusers.show(userID, "username")
+    password = manusers.show(userID, "password")
+
+    text, markup = process.getTPlan(userID, username, password)
+
+    bot.send_message(
+        userID,
+        text,
+        reply_markup = markup
+    )
+
+
 def iweOptions(userID, msg, bot):
     username = manusers.show(userID, "username")
     password = manusers.show(userID, "password")
@@ -139,14 +187,21 @@ def handle(userID, msg, bot):
 
     if   (msg == "🛟 Hilfe")                    : sendHelp          (userID, msg, bot)
     elif (msg == "🧑🏼‍🚀 Anmelden")                 : register          (userID, msg, bot)
+    
+    elif (msg == "📅 Pläne")                    : showPlans         (userID, msg, bot)
     elif (msg == "☀️ Tagesplan")                : sendPlan          (userID, msg, 0, bot)
     elif (msg == "🌼 Nächster Plan")            : sendPlan          (userID, msg, 1, bot)
+    elif (msg == "🥸 Vertretungsplan")          : sendVPlan         (userID, msg, bot)
+    elif (msg == "🍽 Speiseplan")               : sendSPlan         (userID, msg, bot)
+    elif (msg == "🏓 AG Plan")                  : sendAPlan         (userID, msg, bot)
+    elif (msg == "📆 Terminplan")               : sendTPlan         (userID, msg, bot)
     elif (msg == "🏡 IWE")                      : iweOptions        (userID, msg, bot)
+
     elif (msg == "🌕 gesamtes IWE")             : iweChange         (userID, msg, bot, 1)
     elif (msg == "🌗 Fr - Sa")                  : iweChange         (userID, msg, bot, 2)
     elif (msg == "🌓 Sa - So")                  : iweChange         (userID, msg, bot, 3)
     elif (msg == "🌑 Abmelden")                 : iweChange         (userID, msg, bot, 0)
-    elif (msg == "📅 Pläne")                    : showPlans         (userID, msg, bot)
+
     elif (msg in ["🧑🏼‍🚀 Zum Hauptmenü", "/main"]) : mainMenue         (userID, msg, bot)
     else:
         # Ab hier muss entschieden werden, ob eine Nachricht erwartet wird,

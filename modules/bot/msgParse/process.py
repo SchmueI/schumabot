@@ -10,6 +10,7 @@ from ..database import manusers
 
 # Interne Module
 from ..tools import iwe
+from ..tools import vplan
 
 no_markup = types.ReplyKeyboardRemove(selective=False)
 
@@ -173,3 +174,24 @@ def showPlans():
     markup.add (tagesp, morpla, verpla, speipl, agplan, terpla, mainme)
 
     return msg, markup
+
+def getVPlan(userID, username, password):
+    DATA = vplan.get(userID, username, password)
+    if DATA == "": DATA = "• Keine Vertretung eingeplant"
+    
+    msg = "<b>Vertretungsplan</b>\n"
+    msg = msg + DATA
+
+    return msg
+
+def getSPlan(userID, username, password):
+    return "NULL", none()
+
+def getAPlan(userID, username, password):
+    return "Null", none()
+    
+
+def getTPlan(userID, username, password):
+    return "Null", none()
+    
+
