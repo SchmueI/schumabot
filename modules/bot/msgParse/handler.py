@@ -25,7 +25,7 @@ def register (userID, msg, bot):
     )
 
 def sendHelp (userID, msg, bot):
-    text, markup = process.sendHelp()
+    text, markup = process.sendHelp(userID)
 
     bot.send_message (
         userID,
@@ -112,12 +112,11 @@ def sendSPlan(userID, msg, bot):
     username = manusers.show(userID, "username")
     password = manusers.show(userID, "password")
 
-    text, markup = process.getSPlan(userID, username, password)
+    text = process.getSPlan(userID, username, password)
 
     bot.send_message(
         userID,
-        text,
-        reply_markup = markup
+        text
     )
 
 def sendAPlan(userID, msg, bot):

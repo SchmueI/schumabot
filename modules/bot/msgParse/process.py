@@ -4,6 +4,7 @@
 # Externe Module
 import importlib
 from telebot import types
+from datetime import datetime
 
 # Nicht öffentliche Module
 from ..database import manusers
@@ -11,6 +12,7 @@ from ..database import manusers
 # Interne Module
 from ..tools import iwe
 from ..tools import vplan
+from ..tools import meal
 
 no_markup = types.ReplyKeyboardRemove(selective=False)
 
@@ -70,6 +72,8 @@ Dies ist eine Hilfenachricht.
         markup.add(nutzername, hilfe)
     else:
         markup = mainMenue(userID)
+
+    return msg, markup
 
 def register():
     msg = """
@@ -185,7 +189,30 @@ def getVPlan(userID, username, password):
     return msg
 
 def getSPlan(userID, username, password):
-    return "NULL", none()
+    date = datetime.today()
+    day = datetime.today().weekday()
+    collect = []
+    
+    for i in range(7):
+        if i == 0: daystr = "Montag"
+        if i == 1: daystr = "Dienstag"
+        if i == 2: daystr = "Mittwoch"
+        if i == 3: daystr = "Donnerstag"
+        if i == 4: daystr = "Freitag"
+        if i == 5: daystr = "Samstag"
+        if i == 6: daystr = "Sonntag"
+        if day <= i:
+            collect.append(daystr)
+    
+    msg = "<b>Speiseplan</b>\n"
+    
+    week = date.strftime("%Y")+"-"+str(date.isocalendar().week)
+    for i in collect:
+        element = meal.read(week=week, weekday=i)
+        msg = msg + "\n<u>"+i+"</u> \n"
+        msg = msg + element + "\n"
+
+    return msg
 
 def getAPlan(userID, username, password):
     return "Null", none()
