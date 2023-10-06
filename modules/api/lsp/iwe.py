@@ -115,7 +115,7 @@ def getState(driver):
         )
     except:
         print ("kann Optionen nicht finden")
-        return False, driver 
+        return False, "Kein IWE gefunden", driver 
     
     # Lade Seitenquelltext
     html = driver.page_source
@@ -152,7 +152,7 @@ def status (driver):
 
     success, driver = callRegistration(driver)
     if not success:
-        return False, driver
+        return False, "Kein IWE gefunden", driver
     
     success, state, driver = getState(driver)
     return success, state, driver
