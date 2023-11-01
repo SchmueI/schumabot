@@ -28,6 +28,20 @@ bot = telebot.TeleBot(token, parse_mode="HTML")
 
 messages = []
 
+DRIVERLESS_COMMANDS = [
+    "🛟 Hilfe",
+    "🧑🏼‍🚀 Anmelden",
+    "📅 Pläne",
+    "🍽 Speiseplan",
+    "⚙️ Einstellungen",
+    "👩🏽 Nutzername ändern",
+    "🔑 Passwort ändern",
+    "🏡 IWE-Automatik ändern",
+    "🌤 Tägliche Nachricht",
+    "🧙🏻 Hauptmenü anpassen",
+    "🧑🏼‍🚀 Zum Hauptmenü"
+]
+
 @bot.message_handler(func=lambda m: True)
 def handle_command(message):
 
@@ -37,19 +51,26 @@ def handle_command(message):
     try:
        
         userID = message.json["chat"]["id"]
+        text = str(message.text)
         requests = 0
         if not userID in credentials.adminID():
             for element in messages:
                 if element[0].json["chat"]["id"] == userID: requests +=1
             
             if not requests > 1:
-                reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
-                messages.append([message, reply])
+                if not text in DRIVERLESS_COMMANDS: 
+                    reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
+                    messages.append([message, reply])
+                else:
+                    handler.handle(userID, msg, bot)
             else:
                 bot.send_message(userID, "🚆 Immer langsam.\n🧑🏼‍🚀 Du darfst maximal 2 Anfragen gleichzeitig stellen.")
         else:
-            reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
-            messages.append([message, reply])
+            if not text in DRIVERLESS_COMMANDS:
+                reply = bot.send_message(message.json["chat"]["id"], "🧑🏼‍🚀 Deine Anfrage wird bearbeitet.\n🌱 Bitte hab etwas Geduld.\n🐌 Derzeit bin ich lahm.")
+                messages.append([message, reply])
+            else:
+                handler.handle(userID, text, bot)
     
     except:
         print ("To many requests.")
@@ -154,12 +175,12 @@ def triggerCrawl():
         if datetime.now().weekday() == 2:
             if time(4, 50) < datetime.now().time() < time(4, 51):
                 crawler.regIWE(bot)
-        if time(18, 15) < datetime.now().time() < time(18, 16):
+        if time(18, 41) < datetime.now().time() < time(18, 42):
             crawler.sendRoutine(bot)
 
 
 _thread.start_new_thread(iterate, ())
 _thread.start_new_thread(updateQueue, ())
-#_thread.start_new_thread(triggerCrawl, ())
+_thread.start_new_thread(triggerCrawl, ())
 
 bot.infinity_polling()
