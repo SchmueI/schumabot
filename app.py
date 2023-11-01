@@ -6,7 +6,7 @@
 # Externe Module
 import telebot
 from telebot import types
-from datetime import datetime
+from datetime import datetime, time
 from time import sleep
 import os
 import _thread
@@ -14,6 +14,7 @@ import _thread
 # Interne Module
 from modules.bot.msgParse import process
 from modules.bot.msgParse import handler
+from modules.bot.routines import crawler
 
 # Nicht öffentliche sichtbare Module/ Testmodule
 from modules.bot.database import manusers
@@ -91,6 +92,10 @@ def run_commands():
             if (userID in credentials.adminID()):
                 bot.send_message(155667852, "Der Bot wird beendet.", parse_mode="HTML")
                 os.system('kill %d' % os.getpid())
+        
+        elif (msg == "shout"):
+            if (userID in credentials.adminID()):
+                crawler.sendRoutine(bot)
             
         else:
             # Jeder weitere Input wird entsprechend mit dem Parser behandelt.
@@ -142,7 +147,19 @@ def iterate():
         sleep(1)
         run_commands()
 
+def triggerCrawl():
+    while True:
+        sleep(6)
+        
+        if datetime.now().weekday() == 2:
+            if time(4, 50) < datetime.now().time() < time(4, 51):
+                crawler.regIWE(bot)
+        if time(18, 15) < datetime.now().time() < time(18, 16):
+            crawler.sendRoutine(bot)
+
+
 _thread.start_new_thread(iterate, ())
 _thread.start_new_thread(updateQueue, ())
+#_thread.start_new_thread(triggerCrawl, ())
 
 bot.infinity_polling()
