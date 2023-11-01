@@ -62,10 +62,11 @@ def collect(driver):
     for day in week:
         inp = []
         for entity in day:
+
             if not "span" in entity:
                 inp.append("")
             else:
-                if not ("<span style=\"color" in entity and not "Inter" in entity):
+                if not ("<span style=\"color" in entity and not "Inter" in entity) and not "lesson-cell cancelled" in entity:
                     # Wenn keine Information eingeklammert ist, handelt es sich um eine Regelstunde
                     """
                     elems = entity.split("<span>")
@@ -92,6 +93,27 @@ def collect(driver):
                         teacher = "("+teacher+")"
                         lesson = lesson + " → selbst."
                         room = "("+room+")"
+                elif ("lesson-cell cancelled" in entity):
+                    
+                    lesson= ""
+                    teacher = ""
+                    room = ""
+
+
+                    lesson = entity.split("lesson-cell cancelled\">", 1)[1]
+                    lesson = lesson.split("timetable-left\">",1)[1].split("timetable-right",1)[0]
+                    lesson = lesson.split("</")[0]
+
+                    bloc = entity.split("lesson-cell cancelled",1)[1].split("</div>",1)[0]
+                    bloc = bloc.split("\n")
+                    teacher = bloc[7].split("<",1)[0]
+                    teacher = teacher[18:]
+
+                    room = bloc[14][22:]
+
+                    lesson = "<del>" + lesson
+                    room = room + "</del>"
+                    
                 else:
                     # Wenn eine Farbkodierung in der Tabelle vorhanden ist, handelt es sich um eine Änderung
                     lesson = entity.split("timetable-left\">",1)[1].split("timetable-right",1)[0]
@@ -101,12 +123,11 @@ def collect(driver):
                         old = lesson.split("red;\">")[2].split("<",1)[0]
                         old = old.replace(" ", "")
                         old = old.replace("\n", "")
-
                         new = lesson.split("green;\">")[1].split("<",1)[0]
                         new = new.replace(" ", "")
                         new = new.replace("\n", "")
-
                         lesson = old + " → " + new
+
 
                     teacher = entity.split("timetable-right\">",1)[1].split("timetable-bottom",1)[0]
                     if not "<span style=\"color:" in teacher:    
@@ -116,27 +137,33 @@ def collect(driver):
                         old = teacher.split("red;\">")[1].split("<",1)[0]
                         old = old.replace(" ", "")
                         old = old.replace("\n", "")
-
                         new = teacher.split("green;\">")[1].split("<",1)[0]
                         new = new.replace(" ", "")
                         new = new.replace("\n", "")
-
                         teacher = old + " → " + new
 
+                        
                     room = entity.split("timetable-bottom\">",1)[1]
                     if not "<span style=\"color:" in room:
                         room = room.split(">")[3].split("<",1)[0].replace(" ", "").replace("\n", "")
                     else:
-                        old = room.split("red;\">")[2].split("<",1)[0]
-                        old = old.replace(" ", "")
-                        old = old.replace("\n", "")
+                        if ("red;\">" in room):
+                            old = room.split("red;\">")[2].split("<",1)[0]
+                            old = old.replace(" ", "")
+                            old = old.replace("\n", "")
 
-                        new = room.split("green;\">")[1].split("<",1)[0]
-                        new = new.replace(" ", "")
-                        new = new.replace("\n", "")
+                            new = room.split("green;\">")[1].split("<",1)[0]
+                            new = new.replace(" ", "")
+                            new = new.replace("\n", "")
 
-                        room = old + " → " + new
-                
+                            room = old + " → " + new
+                        elif ("green;\">" in room):
+                            new = room.split("green;\">")[1].split("<",1)[0]
+                            new = new.replace(" ", "")
+                            new = new.replace("\n", "")
+
+                            room = "<b>"+new+"</b>"
+            
                 inp.append(lesson+" "+teacher+" "+room)
         
         week[i] = inp
